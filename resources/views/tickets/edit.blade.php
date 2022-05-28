@@ -8,7 +8,7 @@
     <section class="px-6">
         <main class="max-w-lg mx-auto mt-10">
 
-            <form method="POST" action="/created">
+            <form method="POST" action="/updated/{{ $ticket->title }}">
                 @csrf
 
                 <div class="mb-6">
@@ -18,7 +18,7 @@
                     </label>
 
                     <input class="border border-gray-400 outline-none focus:outline-none p-2 w-full"
-                            type="text" name="title" id="title" value="{{ old('title') }}" required>
+                            type="text" name="title" id="title" value="{{ $ticket->title }}" required>
 
 
                     @error('title')
@@ -34,7 +34,7 @@
                     </label>
 
                     <textarea class="border-gray-400 w-full"
-                            type="text" name="description" id="description" required>{{ old('description') }}</textarea>
+                            type="text" name="description" id="description" required>{{ $ticket->description }}</textarea>
 
                     @error('description')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -49,7 +49,7 @@
                     </label>
 
                     <input class="border border-gray-400 p-2 w-full"
-                            type="text" name="client_name" id="client_name" value="{{ old('client_name') }}" required>
+                            type="text" name="client_name" id="client_name" value="{{ $ticket->client->name }}" required>
 
 
                     @error('client_name')
@@ -65,7 +65,7 @@
                     </label>
 
                     <input class="border border-gray-400 p-2 w-full"
-                            type="email" name="client_email" id="client_email" value="{{ old('client_email') }}" required>
+                            type="email" name="client_email" id="client_email" value="{{ $ticket->client->email }}" required>
 
                     @error('email')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -76,18 +76,51 @@
                 <div class="mb-6">
                     <label class="mb-2 uppercase font-bold text-xs text-gray-700"
                             for="technician">
-                            Assign technician
+                            Assigned technician
                     </label>
 
                     <select class="border border-gray-400 p-2 w-full"
                             type="email" name="technician" id="technician" required>
-                                <option hidden disabled selected value>Select a technician</option>
+
                             @foreach ($technicians as $technician)
+                                @if ($loop->first)
+                                    <option value="{{ $ticket->technician->id }}">{{ $ticket->technician->name }}</option>
+                                @endif
+                                @if ($technician->id == $ticket->technician->id)
+                                    @continue
+                                @endif
                                 <option value="{{ $technician->id }}">{{ $technician->name }}</option>
                             @endforeach
                     </select>
                 </div>
 
+                <div class="mb-6">
+                    <label class="mb-2 uppercase font-bold text-xs text-gray-700"
+                        for="status">
+                        Status:
+                    </label><br>
+
+                    <input type="radio" name="status" id="status" value="Open" class="ml-4"
+                        @if ($ticket->status->status == 'Open')
+                            checked
+                        @endif
+                    />
+                    <label for="status">Open</label>
+
+                    <input type="radio" name="status" id="status" value="Pending" class="ml-4"
+                        @if ($ticket->status->status == 'Pending')
+                            checked
+                        @endif
+                    />
+                    <label for="status">Pending</label>
+
+                    <input type="radio" name="status" id="status" value="Closed" class="ml-4"
+                        @if ($ticket->status->status == 'Closed')
+                            checked
+                        @endif
+                    />
+                    <label for="status">Closed</label>
+                </div>
 
                 <div class="mb-6 text-center">
                     <button type="submit"

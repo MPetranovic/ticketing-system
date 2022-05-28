@@ -18,13 +18,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-require __DIR__.'/auth.php';
+Route::get('dashboard', [TicketController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::get('create', [TicketController::class, 'create'])->middleware('auth');
 Route::post('created',[TicketController::class, 'store'])->middleware(('auth'));
 
+Route::get('view/{ticket:title}', [TicketController::class, 'show'])->middleware(('auth'));;
+Route::get('update/{ticket:title}', [TicketController::class, 'edit'])->middleware(('auth'));;
+Route::post('updated/{ticket:title}',[TicketController::class, 'update'])->middleware(('auth'));
 
+
+
+require __DIR__.'/auth.php';

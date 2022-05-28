@@ -10,7 +10,7 @@ class Status extends Model
     use HasFactory;
 
     public function tickets() {
-        return $this->hasMany(Ticket::class);
+        return $this->hasOne(Ticket::class);
     }
 
 }
