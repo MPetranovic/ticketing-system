@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Status;
-use App\Models\Technician;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -19,16 +19,13 @@ class TicketController extends Controller
     public function index()
     {
         $id = auth()->user()->id;
-        // $client_name = request('search');
-        // dd($client_name);
-        // if (request('search') != null) {
-        //     $clients = Client::where('name', 'like', '%' . request('search') . '%')->get();
-        // }
-
-        // dd($clients);
-
-        $tickets = Ticket::where('user_id', $id)->latest()->filter(
-                    request(['search']))->paginate(7)->withQueryString();
+        if(auth()->user()->role == 'agent') {
+            $tickets = Ticket::where('user_id', $id)->latest()->filter(
+                request(['search', 'client']))->paginate(7)->withQueryString();
+        } else {
+            $tickets = Ticket::where('technician_id', $id)->latest()->filter(
+                request(['search', 'client']))->paginate(7)->withQueryString();
+        }
 
         return view('dashboard',[
             'tickets' => $tickets
@@ -43,7 +40,7 @@ class TicketController extends Controller
     public function create()
     {
         return view('tickets.create', [
-            'technicians' => Technician::all()
+            'technicians' => User::where('role', 'technician')->get()
         ]);
     }
 
@@ -120,7 +117,7 @@ class TicketController extends Controller
 
         return view('tickets.edit', [
             'ticket' => $ticket,
-            'technicians' => Technician::all()
+            'technicians' => User::where('role', 'technician')->get()
         ]);
     }
 

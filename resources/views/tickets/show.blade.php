@@ -14,7 +14,7 @@
             </div>
 
             <div class="text-lg text-indigo-900 mb-4">
-                <strong>Client:</strong> {{ $client->name }}
+                <strong>Client:</strong> <a href="/dashboard/?client={{ $ticket->client->name }}" class="text-indigo-700">{{ $client->name }}</a>
             </div>
 
             <div class="text-lg text-indigo-900 mb-4">

@@ -3,8 +3,8 @@
         <div class="flex justify-center">
             <div class="rounded-xl">
                 <form method="GET" action="#">
-                    @if (request('category'))
-                        <input type="hidden" name="category" value="{{ request('category') }}">
+                    @if (request('client'))
+                        <input type="hidden" name="client" value="{{ request('client') }}">
                     @endif
                     <input type="text" name="search" placeholder="Search the database..."
                            class="text-center border-none outline-none bg-transparent placeholder-black font-semibold text-xl"
@@ -14,6 +14,7 @@
         </div>
     </x-slot>
 
+    @if (auth()->user()->role == 'agent')
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -30,6 +31,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <div class="py-2">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -57,7 +59,9 @@
                             @foreach($tickets as $ticket)
                                 <div class="table-row">
                                     <div class="table-cell text-center py-2">{{ $ticket->title }}</div>
-                                    <div class="table-cell text-center py-2">{{ $ticket->client->name }}</div>
+                                    <a href="/dashboard/?client={{ $ticket->client->name }} && {{ http_build_query(request()->except('client', 'page')) }}">
+                                        <div class="table-cell text-center py-2">{{ $ticket->client->name }}</div>
+                                    </a>
                                     <div class="table-cell text-center py-2">{{ substr($ticket->created_at, 0, 10) }}</div>
                                     <div class="table-cell text-center py-2">{{ $ticket->status->status }}</div>
                                     <div class="table-cell text-center py-2"><a href="/view/{{ $ticket->title }}"><button class="bg-sky-500 text-white rounded-full border-4 border-sky-500">Open</button></a></div>

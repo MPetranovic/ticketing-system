@@ -17,12 +17,12 @@ class Ticket extends Model
             )
         );
 
-        // $query->when($filters['client'] ?? false, fn($query, $client)
-        //     => $query
-        //         ->whereHas('client', fn($query)
-        //             => $query->where('name', $client)
-        //     )
-        // );
+        $query->when($filters['client'] ?? false, fn($query, $client)
+            => $query
+                ->whereHas('client', fn($query)
+                    => $query->where('name', $client)
+            )
+        );
     }
 
     public function agent() {
@@ -38,7 +38,7 @@ class Ticket extends Model
     }
 
     public function technician() {
-        return $this->belongsTo(Technician::class);
+        return $this->belongsTo(User::class, 'technician_id');
     }
 
 }
