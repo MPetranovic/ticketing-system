@@ -30,7 +30,10 @@
 
 
             <div class="text-lg text-indigo-900 mb-4">
-                <strong>Assigned technician:</strong> {{ $technician->name }}
+                <strong>Assigned technicians:</strong>
+                @foreach ($technicians as $technician )
+                    {{ $technician->name }} <br>
+                @endforeach
             </div>
 
             <div class="flex justify-between text-lg text-indigo-900 mb-4">

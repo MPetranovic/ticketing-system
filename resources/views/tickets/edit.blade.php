@@ -76,20 +76,21 @@
                 <div class="mb-6">
                     <label class="mb-2 uppercase font-bold text-xs text-gray-700"
                             for="technician">
-                            Assigned technician
+                            Assigned technicians
                     </label>
 
                     <select class="border border-gray-400 p-2 w-full"
                             type="email" name="technician" id="technician" required>
 
                             @foreach ($technicians as $technician)
-                                @if ($loop->first)
+                                <option value="{{ $technician->id }}">{{ $technician->name }}</option>
+                                {{-- @if ($loop->first)
                                     <option value="{{ $ticket->technician->id }}">{{ $ticket->technician->name }}</option>
                                 @endif
                                 @if ($technician->id == $ticket->technician->id)
                                     @continue
                                 @endif
-                                <option value="{{ $technician->id }}">{{ $technician->name }}</option>
+                                <option value="{{ $technician->id }}">{{ $technician->name }}</option> --}}
                             @endforeach
                     </select>
                 </div>

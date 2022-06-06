@@ -7,6 +7,7 @@ use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class TicketController extends Controller
@@ -18,15 +19,17 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $id = auth()->user()->id;
         if(auth()->user()->role == 'agent') {
-            $tickets = Ticket::where('user_id', $id)->latest()->filter(
+            $tickets = Ticket::where('user_id', auth()->user()->id)->latest()->filter(
                 request(['search', 'client']))->paginate(7)->withQueryString();
         } else {
-            $tickets = Ticket::where('technician_id', $id)->latest()->filter(
-                request(['search', 'client']))->paginate(7)->withQueryString();
+            $tickets = Ticket::whereHas('technicians', function (Builder $query) {
+                $query->where('technician_id', '=', auth()->user()->id);})
+            ->latest()->filter(request(['search', 'client']))
+            ->paginate(7)->withQueryString();
         }
 
+        //ddd($tickets);
         return view('dashboard',[
             'tickets' => $tickets
         ]);
@@ -57,9 +60,13 @@ class TicketController extends Controller
             'description' => 'required',
             'client_name' => 'required',
             'client_email' => 'required | email | max:30',
-            'technician' => 'required'
+            'technicians' => 'required'
 
         ]);
+
+
+        dd($request->input('technicians'));
+
 
         $client = Client::firstOrCreate([
             'name' => $request->input('client_name'),
@@ -75,9 +82,10 @@ class TicketController extends Controller
         $ticket->description = $request->input('description');
         $ticket->user_id = auth()->user()->id;
         $ticket->client_id = $client->id;
-        $ticket->technician_id = $request->input('technician');
         $ticket->status_id = $status->id;
         $ticket->save();
+
+        $ticket->technicians()->attach([$request->input('technicians')]);
 
         $status->ticket_id = $ticket->id;
         $status->save();
@@ -94,13 +102,13 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         $client = $ticket->client;
-        $technician = $ticket->technician;
+        $technicians = $ticket->technicians;
         $status = $ticket->status;
 
         return view('tickets.show', [
             'ticket' => $ticket,
             'client' => $client,
-            'technician' => $technician,
+            'technicians' => $technicians,
             'status' => $status
         ]);
     }
@@ -164,8 +172,10 @@ class TicketController extends Controller
 
         $ticket->title = $request->input('title');
         $ticket->description = $request->input('description');
-        $ticket->technician_id = $request->input('technician');
+        $ticket->technicians()->sync([$request->input('technician')]);
         $ticket->save();
+
+
 
         return redirect('/dashboard')->with('info', 'Ticket Updated');
     }

@@ -47,4 +47,7 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
+    public function technician_tickets() {
+        return $this->belongsToMany(Ticket::class, 'technicians_tickets', 'technician_id', 'ticket_id')->withTimestamps();
+    }
 }

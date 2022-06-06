@@ -75,12 +75,12 @@
 
                 <div class="mb-6">
                     <label class="mb-2 uppercase font-bold text-xs text-gray-700"
-                            for="technician">
-                            Assign technician
+                            for="technicians">
+                            Assign technicians
                     </label>
 
                     <select class="border border-gray-400 p-2 w-full"
-                            type="email" name="technician" id="technician" required>
+                            name="technicians[]" multiple="multiple" required>
                                 <option hidden disabled selected value>Select a technician</option>
                             @foreach ($technicians as $technician)
                                 <option value="{{ $technician->id }}">{{ $technician->name }}</option>
@@ -105,3 +105,5 @@
     </section>
     <a href="{{ url('/dashboard') }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
 </x-app-layout>
+
+

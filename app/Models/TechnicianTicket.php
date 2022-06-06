@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Ticket extends Model
+class TechnicianTicket extends Pivot
 {
-    use HasFactory;
+    public $table = 'technicians_tickets';
 
     public function scopeFilter($query, array $filters) {
         $query->when($filters['search'] ?? false, fn($query, $search)
@@ -24,21 +23,4 @@ class Ticket extends Model
             )
         );
     }
-
-    public function agent() {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function client() {
-        return $this->belongsTo(Client::class);
-    }
-
-    public function status() {
-        return $this->belongsTo(Status::class);
-    }
-
-    public function technicians() {
-        return $this->belongsToMany(User::class, 'technicians_tickets', 'ticket_id', 'technician_id')->withTimestamps();
-    }
-
 }
