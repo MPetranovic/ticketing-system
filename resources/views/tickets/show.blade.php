@@ -31,9 +31,11 @@
 
             <div class="text-lg text-indigo-900 mb-4">
                 <strong>Assigned technicians:</strong>
-                @foreach ($technicians as $technician )
-                    {{ $technician->name }} <br>
-                @endforeach
+                <ul class="list-disc list-inside ml-4">
+                    @foreach ($technicians as $technician)
+                            <li>{{ $technician->name }}</li>
+                    @endforeach
+                </ul>
             </div>
 
             <div class="flex justify-between text-lg text-indigo-900 mb-4">

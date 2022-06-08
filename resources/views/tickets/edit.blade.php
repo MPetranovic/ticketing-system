@@ -18,7 +18,10 @@
                     </label>
 
                     <input class="border border-gray-400 outline-none focus:outline-none p-2 w-full"
-                            type="text" name="title" id="title" value="{{ $ticket->title }}" required>
+                            type="text" name="title" id="title" value="{{ $ticket->title }}" required
+                            @if (auth()->user()->role == 'technician')
+                                readonly
+                            @endif>
 
 
                     @error('title')
@@ -49,7 +52,10 @@
                     </label>
 
                     <input class="border border-gray-400 p-2 w-full"
-                            type="text" name="client_name" id="client_name" value="{{ $ticket->client->name }}" required>
+                            type="text" name="client_name" id="client_name" value="{{ $ticket->client->name }}" required
+                            @if (auth()->user()->role == 'technician')
+                                readonly
+                            @endif>
 
 
                     @error('client_name')
@@ -65,7 +71,10 @@
                     </label>
 
                     <input class="border border-gray-400 p-2 w-full"
-                            type="email" name="client_email" id="client_email" value="{{ $ticket->client->email }}" required>
+                            type="email" name="client_email" id="client_email" value="{{ $ticket->client->email }}" required
+                            @if (auth()->user()->role == 'technician')
+                                readonly
+                            @endif>
 
                     @error('email')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -79,20 +88,25 @@
                             Assigned technicians
                     </label>
 
-                    <select class="border border-gray-400 p-2 w-full"
-                            type="email" name="technician" id="technician" required>
-
+                    @if (auth()->user()->role == 'agent')
+                        <select class="border border-gray-400 p-2 w-full"
+                                name="technicians[]" id="myselect" multiple="multiple" required>
+                                @foreach ($technicians as $technician)
+                                    <option value="{{ $technician->id }}" selected>{{ $technician->name }}</option>
+                                @endforeach
+                                @foreach ($others as $other)
+                                    <option value="{{ $other->id }}">{{ $other->name }}</option>
+                                @endforeach
+                        </select>
+                    @else
+                        <ul class="list-disc list-inside">
                             @foreach ($technicians as $technician)
-                                <option value="{{ $technician->id }}">{{ $technician->name }}</option>
-                                {{-- @if ($loop->first)
-                                    <option value="{{ $ticket->technician->id }}">{{ $ticket->technician->name }}</option>
-                                @endif
-                                @if ($technician->id == $ticket->technician->id)
-                                    @continue
-                                @endif
-                                <option value="{{ $technician->id }}">{{ $technician->name }}</option> --}}
+                                    <li>{{ $technician->name }}</li>
+                                    <input type="hidden" name="technicians" value="{{ $technician->id }}">
                             @endforeach
-                    </select>
+                        </ul>
+                    @endif
+
                 </div>
 
                 <div class="mb-6">

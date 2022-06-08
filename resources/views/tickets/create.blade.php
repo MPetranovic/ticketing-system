@@ -80,12 +80,12 @@
                     </label>
 
                     <select class="border border-gray-400 p-2 w-full"
-                            name="technicians[]" multiple="multiple" required>
-                                <option hidden disabled selected value>Select a technician</option>
-                            @foreach ($technicians as $technician)
-                                <option value="{{ $technician->id }}">{{ $technician->name }}</option>
-                            @endforeach
+                        name="technicians[]" id="myselect" multiple="multiple" required>
+                        @foreach ($technicians as $technician)
+                            <option value="{{ $technician->id }}">{{ $technician->name }}</option>
+                        @endforeach
                     </select>
+
                 </div>
 
 
@@ -101,6 +101,7 @@
                 @endforeach
 
             </form>
+
         </main>
     </section>
     <a href="{{ url('/dashboard') }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>

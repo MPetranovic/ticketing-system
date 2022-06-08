@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Models\TechnicianTicket;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -19,7 +20,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        if(auth()->user()->role == 'agent') {
+        if (auth()->user()->role == 'agent') {
             $tickets = Ticket::where('user_id', auth()->user()->id)->latest()->filter(
                 request(['search', 'client']))->paginate(7)->withQueryString();
         } else {
@@ -64,10 +65,6 @@ class TicketController extends Controller
 
         ]);
 
-
-        dd($request->input('technicians'));
-
-
         $client = Client::firstOrCreate([
             'name' => $request->input('client_name'),
             'email' => $request->input('client_email')
@@ -85,7 +82,10 @@ class TicketController extends Controller
         $ticket->status_id = $status->id;
         $ticket->save();
 
-        $ticket->technicians()->attach([$request->input('technicians')]);
+        $technicians[] = $request->input('technicians');
+        for ($i=0; $i < count($technicians); $i++) {
+            $ticket->technicians()->attach($technicians[$i]);
+        }
 
         $status->ticket_id = $ticket->id;
         $status->save();
@@ -122,10 +122,15 @@ class TicketController extends Controller
     public function edit($title)
     {
         $ticket = Ticket::firstWhere('title', $title);
+        $technicians_id = TechnicianTicket::where('ticket_id', $ticket->id)->get()->pluck('technician_id')->toArray();
+        $technicians = User::where('role', 'technician')->whereIn('id', $technicians_id)->get();
+
+        $others = User::where('role', 'technician')->get()->except($technicians_id);
 
         return view('tickets.edit', [
             'ticket' => $ticket,
-            'technicians' => User::where('role', 'technician')->get()
+            'technicians' => $technicians,
+            'others' => $others,
         ]);
     }
 
@@ -145,37 +150,44 @@ class TicketController extends Controller
             'description' => 'required',
             'client_name' => 'required',
             'client_email' => 'required | email | max:30',
-            'technician' => 'required',
+            'technicians' => 'required',
             'status' => 'required'
         ]);
 
-        $tmp_client = Client::firstWhere([
-            'name' => $request->input('client_name'),
-            'email' => $request->input('client_email')
-        ]);
-        $client = $ticket->client;
+        if (auth()->user()->role == 'agent') {
 
-        if ($tmp_client != null && $tmp_client != $client) {
-            $client->delete();
-            $ticket->client_id = $tmp_client->id;
+            $tmp_client = Client::firstWhere([
+                'name' => $request->input('client_name'),
+                'email' => $request->input('client_email')
+            ]);
+            $client = $ticket->client;
+
+            if ($tmp_client != null && $tmp_client != $client) {
+                $client->delete();
+                $ticket->client_id = $tmp_client->id;
+            }
+
+            else {
+                $client->name = $request->input('client_name');
+                $client->email = $request->input('client_email');
+                $client->save();
+            }
+
+            $ticket->title = $request->input('title');
+
+            $technicians[] = $request->input('technicians');
+            for ($i=0; $i < count($technicians); $i++) {
+                $ticket->technicians()->sync($technicians[$i]);
+            }
+
         }
 
-        else {
-            $client->name = $request->input('client_name');
-            $client->email = $request->input('client_email');
-            $client->save();
-        }
+        $ticket->description = $request->input('description');
+        $ticket->save();
 
         $status = $ticket->status;
         $status->status = $request->input('status');
         $status->save();
-
-        $ticket->title = $request->input('title');
-        $ticket->description = $request->input('description');
-        $ticket->technicians()->sync([$request->input('technician')]);
-        $ticket->save();
-
-
 
         return redirect('/dashboard')->with('info', 'Ticket Updated');
     }

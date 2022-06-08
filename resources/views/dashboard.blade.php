@@ -26,6 +26,11 @@
                         <button class="bg-green-500 text-white rounded py-2 px-4 hover:bg-green-400">
                             Create
                         </button>
+                        {{-- Animacija za kasnije
+                        <span class="flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-sky-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                        </span> --}}
                     </a>
                 </div>
             </div>
