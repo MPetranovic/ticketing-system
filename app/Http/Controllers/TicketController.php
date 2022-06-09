@@ -21,13 +21,14 @@ class TicketController extends Controller
     public function index()
     {
         if (auth()->user()->role == 'agent') {
-            $tickets = Ticket::where('user_id', auth()->user()->id)->latest()->filter(
-                request(['search', 'client']))->paginate(7)->withQueryString();
+            $tickets = Ticket::where('user_id', auth()->user()->id)->filter(
+                request(['search', 'client']))->sortable(['updated_at' => 'desc'])
+                ->paginate(7)->withQueryString();
         } else {
             $tickets = Ticket::whereHas('technicians', function (Builder $query) {
                 $query->where('technician_id', '=', auth()->user()->id);})
-            ->latest()->filter(request(['search', 'client']))
-            ->paginate(7)->withQueryString();
+            ->filter(request(['search', 'client']))->sortable(['updated_at' => 'desc'])
+            ->paginate(7)->fragment('tickets')->withQueryString();
         }
 
         //ddd($tickets);

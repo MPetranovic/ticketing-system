@@ -53,10 +53,10 @@
                     <div class="table w-full">
                         <div class="table-header-group">
                             <div class="table-row bg-sky-300 border-sky-400">
-                                <div class="table-cell text-center py-2">Title</div>
-                                <div class="table-cell text-center py-2">Client</div>
-                                <div class="table-cell text-center py-2">Created</div>
-                                <div class="table-cell text-center py-2">Status</div>
+                                <div class="table-cell text-center py-2">@sortablelink('title', 'Title')</div>
+                                <div class="table-cell text-center py-2">@sortablelink('client.name', 'Client')</div>
+                                <div class="table-cell text-center py-2">@sortablelink('updated_at', 'Updated')</div>
+                                <div class="table-cell text-center py-2">@sortablelink('status.status', 'Status')</div>
                                 <div class="table-cell text-center py-2">Inspect</div>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                                     <a href="/dashboard/?client={{ $ticket->client->name }} && {{ http_build_query(request()->except('client', 'page')) }}">
                                         <div class="table-cell text-center py-2">{{ $ticket->client->name }}</div>
                                     </a>
-                                    <div class="table-cell text-center py-2">{{ substr($ticket->created_at, 0, 10) }}</div>
+                                    <div class="table-cell text-center py-2">{{ substr($ticket->updated_at, 0, 10) }}</div>
                                     <div class="table-cell text-center py-2">{{ $ticket->status->status }}</div>
                                     <div class="table-cell text-center py-2"><a href="/view/{{ $ticket->title }}"><button class="bg-sky-500 text-white rounded-full border-4 border-sky-500">Open</button></a></div>
                                 </div>
@@ -79,7 +79,7 @@
 
             </div>
             <div class="mt-4">
-                {{ $tickets->links() }}
+                {!! $tickets->appends(\Request::except('page'))->render() !!}
             </div>
         </div>
     </div>

@@ -4,10 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Ticket extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
+
+    public $sortable = [
+        'title',
+        'updated_at',
+    ];
 
     public function scopeFilter($query, array $filters) {
         $query->when($filters['search'] ?? false, fn($query, $search)
