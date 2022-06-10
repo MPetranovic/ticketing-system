@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +23,12 @@ Route::get('dashboard', [TicketController::class, 'index'])->middleware(['auth']
 
 Route::get('create', [TicketController::class, 'create'])->middleware('agent');
 Route::post('created',[TicketController::class, 'store'])->middleware(('agent'));
+Route::get('technicians', [TechnicianController::class, 'index'])->middleware('agent')->name('technicians');
+Route::get('technicians/{technician:name}', [TechnicianController::class, 'show'])->middleware('agent');
+Route::delete('technicians/{technician:name}/delete', [TechnicianController::class, 'destroy'])->middleware('agent');
 
-Route::get('view/{ticket:title}', [TicketController::class, 'show'])->middleware(('auth'));;
-Route::get('update/{ticket:title}', [TicketController::class, 'edit'])->middleware(('auth'));;
+Route::get('view/{ticket:title}', [TicketController::class, 'show'])->middleware(('auth'));
+Route::get('update/{ticket:title}', [TicketController::class, 'edit'])->middleware(('auth'));
 Route::post('updated/{ticket:title}',[TicketController::class, 'update'])->middleware(('auth'))->name('update-post');
 
 

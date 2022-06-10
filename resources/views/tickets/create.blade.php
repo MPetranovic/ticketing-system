@@ -104,7 +104,7 @@
 
         </main>
     </section>
-    <a href="{{ url('/dashboard') }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
+    <a href="{{ url()->previous() }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
 </x-app-layout>
 
 

@@ -14,8 +14,8 @@ class CreateTechniciansTicketsTable extends Migration
     public function up()
     {
         Schema::create('technicians_tickets', function (Blueprint $table) {
-            $table->foreignId('technician_id')->constrained();
-            $table->foreignId('ticket_id')->constrained();
+            $table->foreignId('technician_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

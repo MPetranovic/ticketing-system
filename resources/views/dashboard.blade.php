@@ -26,11 +26,23 @@
                         <button class="bg-green-500 text-white rounded py-2 px-4 hover:bg-green-400">
                             Create
                         </button>
-                        {{-- Animacija za kasnije
+                        {{-- Za kasnije
                         <span class="flex h-3 w-3">
                             <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-sky-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
-                        </span> --}}
+                        </span>
+
+                        <span class="relative inline-block">
+                                <svg class="w-6 h-6 text-gray-700 fill-current" viewBox="0 0 20 20"><path d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                                <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">99</span>
+                        </span>
+
+                        <span class="relative inline-block ml-8">
+                                <svg class="w-6 h-6 text-gray-700 fill-current" viewBox="0 0 20 20"><path d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                                <span class="absolute top-0 right-0 inline-block w-2 h-2 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full"></span>
+                        </span>
+
+                        --}}
                     </a>
                 </div>
             </div>
@@ -64,9 +76,7 @@
                             @foreach($tickets as $ticket)
                                 <div class="table-row">
                                     <div class="table-cell text-center py-2">{{ $ticket->title }}</div>
-                                    <a href="/dashboard/?client={{ $ticket->client->name }} && {{ http_build_query(request()->except('client', 'page')) }}">
-                                        <div class="table-cell text-center py-2">{{ $ticket->client->name }}</div>
-                                    </a>
+                                    <div class="table-cell text-center py-2"><a href="/dashboard/?client={{ $ticket->client->name }} && {{ http_build_query(request()->except('client', 'page')) }}">{{ $ticket->client->name }}</a></div>
                                     <div class="table-cell text-center py-2">{{ substr($ticket->updated_at, 0, 10) }}</div>
                                     <div class="table-cell text-center py-2">{{ $ticket->status->status }}</div>
                                     <div class="table-cell text-center py-2"><a href="/view/{{ $ticket->title }}"><button class="bg-sky-500 text-white rounded-full border-4 border-sky-500">Open</button></a></div>

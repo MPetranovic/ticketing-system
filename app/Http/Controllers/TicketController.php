@@ -88,9 +88,6 @@ class TicketController extends Controller
             $ticket->technicians()->attach($technicians[$i]);
         }
 
-        $status->ticket_id = $ticket->id;
-        $status->save();
-
         return redirect('/dashboard')->with('success', 'Ticket Created');
     }
 

@@ -17,9 +17,10 @@ class CreateTicketsTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->foreignId('user_id');
-            $table->foreignId('client_id');
-            $table->foreignId('status_id');
+            $table->foreignId('user_id')->onDelete('cascade');
+            $table->foreignId('client_id')->onDelete('cascade');
+            $table->foreignId('status_id')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

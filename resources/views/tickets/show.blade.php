@@ -31,6 +31,9 @@
 
             <div class="text-lg text-indigo-900 mb-4">
                 <strong>Assigned technicians:</strong>
+                @if (! $technicians->count())
+                    <p class="text-xl text-red-500 mt-2">WARNING There are no technicians assigned to this ticket!</p>
+                @endif
                 <ul class="list-disc list-inside ml-4">
                     @foreach ($technicians as $technician)
                             <li>{{ $technician->name }}</li>
@@ -53,7 +56,7 @@
         </div>
     </div>
 
-    <a href ="{{ url('/dashboard') }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
+    <a href ="{{ url()->previous() }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
 </x-app-layout>
 
 

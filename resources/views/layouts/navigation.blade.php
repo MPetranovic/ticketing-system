@@ -15,6 +15,15 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @if (auth()->user()->role == 'agent')
+                        <x-nav-link :href="route('technicians')" :active="request()->routeIs('technicians')">
+                            {{ __('Technicians') }}
+                            {{-- Za kasnije
+                            <span class="inline-flex items-center justify-center px-2 py-1 ml-1 text-xs font-bold leading-none text-white bg-slate-400 rounded-full">
+                                {{DB::table('users')->where('role', 'technician')->count()}}
+                            </span> --}}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
