@@ -5,6 +5,8 @@
         </h2>
     </x-slot>
 
+    <x-technician-modal :technician="$technician"/>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -32,12 +34,9 @@
             </div>
 
             <div class="mb-6 text-center">
-                <form method="POST" action="/technicians/{{ $technician->name }}/delete">
-                    @csrf
-                    <input name="_method" type="hidden" value="DELETE">
-                    <button type="submit" class="bg-red-500 text-white rounded py-2 px-4 hover:bg-red-400">Delete this technician</button></a>
-                </form>
+                <button type="button" data-modal-toggle="popup-modal" class="bg-red-500 text-white rounded py-2 px-4 hover:bg-red-400">Delete this technician</button></a>
             </div>
+
         </div>
     </div>
     <a href ="{{ url('/technicians') }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>

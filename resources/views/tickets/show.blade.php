@@ -5,6 +5,8 @@
         </h2>
     </x-slot>
 
+    <x-ticket-modal :ticket="$ticket"/>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -51,7 +53,14 @@
                         <span class="text-red-400">{{ $status->status }}</span>
                     @endif
                 </strong>
-                <a href ="/update/{{ $ticket->title }}"><button class="bg-green-400 text-white py-2 px-4 rounded-xl">Update</button></a>
+
+                <button type="button" data-modal-toggle="popup-modal"
+                    class="bg-red-500 text-white py-2 px-4 hover:bg-red-400 rounded-xl">
+                    Delete this ticket
+                </button></a>
+
+
+                <a href ="/update/{{ $ticket->title }}"><button class="bg-green-500 text-white py-2 px-4 hover:bg-green-400 rounded-xl">Update</button></a>
             </div>
         </div>
     </div>

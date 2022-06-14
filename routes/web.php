@@ -23,6 +23,7 @@ Route::get('dashboard', [TicketController::class, 'index'])->middleware(['auth']
 
 Route::get('create', [TicketController::class, 'create'])->middleware('agent');
 Route::post('created',[TicketController::class, 'store'])->middleware(('agent'));
+Route::delete('view/{ticket:title}/delete', [TicketController::class, 'destroy'])->middleware('agent');
 Route::get('technicians', [TechnicianController::class, 'index'])->middleware('agent')->name('technicians');
 Route::get('technicians/{technician:name}', [TechnicianController::class, 'show'])->middleware('agent');
 Route::delete('technicians/{technician:name}/delete', [TechnicianController::class, 'destroy'])->middleware('agent');

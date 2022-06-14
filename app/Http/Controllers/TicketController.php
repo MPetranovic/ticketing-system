@@ -196,8 +196,10 @@ class TicketController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($title)
     {
-        //
+        Ticket::where('title', $title)->delete();
+
+        return redirect('/dashboard')->with('warning', 'Ticket Deleted');
     }
 }
