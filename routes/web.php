@@ -32,6 +32,4 @@ Route::get('view/{ticket:title}', [TicketController::class, 'show'])->middleware
 Route::get('update/{ticket:title}', [TicketController::class, 'edit'])->middleware(('auth'));
 Route::post('updated/{ticket:title}',[TicketController::class, 'update'])->middleware(('auth'))->name('update-post');
 
-
-
 require __DIR__.'/auth.php';

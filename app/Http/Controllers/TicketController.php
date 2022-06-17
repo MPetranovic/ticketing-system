@@ -7,6 +7,7 @@ use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Models\TechnicianTicket;
+use App\Notifications\TicketAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -31,7 +32,6 @@ class TicketController extends Controller
             ->paginate(7)->fragment('tickets')->withQueryString();
         }
 
-        //ddd($tickets);
         return view('dashboard',[
             'tickets' => $tickets
         ]);
@@ -83,9 +83,15 @@ class TicketController extends Controller
         $ticket->status_id = $status->id;
         $ticket->save();
 
-        $technicians[] = $request->input('technicians');
+        $bruhs = [];
+        $technicians = $request->input('technicians');
         for ($i=0; $i < count($technicians); $i++) {
             $ticket->technicians()->attach($technicians[$i]);
+
+            $technician = User::where('id', $technicians[$i])->get();
+
+            TicketController::send_email(auth()->user(), $technician);
+            $bruhs[$i] = $technician;
         }
 
         return redirect('/dashboard')->with('success', 'Ticket Created');
@@ -173,10 +179,19 @@ class TicketController extends Controller
 
             $ticket->title = $request->input('title');
 
-            $technicians[] = $request->input('technicians');
+            $technicians = $request->input('technicians');
+
             for ($i=0; $i < count($technicians); $i++) {
-                $ticket->technicians()->sync($technicians[$i]);
+                $notified = TechnicianTicket::where('technician_id', $technicians[$i])->where('ticket_id', $ticket->id)->get();
+
+                if(count($notified) == 0) {
+                    $technician = User::where('id', $technicians[$i])->get();
+                    TicketController::send_email(auth()->user(), $technician);
+                }
+
             }
+
+            $ticket->technicians()->sync($technicians);
 
         }
 
@@ -202,4 +217,17 @@ class TicketController extends Controller
 
         return redirect('/dashboard')->with('warning', 'Ticket Deleted');
     }
+
+    public function send_email($agent, $technician)
+    {
+        $assignmentData = [
+            'greeting' => 'Hello '. $technician[0]->name,
+            'body' => 'Agent '. $agent->name . ' has assigned you a new ticket.',
+            'button' => 'Visit Site',
+            'url' => url('/dashboard'),
+        ];
+
+        $technician[0]->notify(new TicketAssignment($assignmentData));
+    }
+
 }
