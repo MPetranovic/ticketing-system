@@ -11,7 +11,6 @@ use App\Notifications\TicketAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
-
 class TicketController extends Controller
 {
     /**
@@ -33,6 +32,27 @@ class TicketController extends Controller
         }
 
         return view('dashboard',[
+            'tickets' => $tickets
+        ]);
+    }
+
+    public function pending(){
+        if (auth()->user()->role == 'agent') {
+            $tickets = Ticket::where('user_id', auth()->user()->id)
+                ->whereHas('status', function (Builder $query) {
+                    $query->where('status', '=', "Pending");})->filter(
+                request(['search', 'client']))->sortable(['updated_at' => 'desc'])
+                ->paginate(9)->withQueryString();
+        } else {
+            $tickets = Ticket::whereHas('technicians', function (Builder $query) {
+                $query->where('technician_id', '=', auth()->user()->id);})
+                ->whereHas('status', function (Builder $query) {
+                    $query->where('status', '=', "Open");})
+            ->filter(request(['search', 'client']))->sortable(['updated_at' => 'desc'])
+            ->paginate(9)->fragment('tickets')->withQueryString();
+        }
+
+        return view('tickets.pending',[
             'tickets' => $tickets
         ]);
     }
@@ -90,7 +110,7 @@ class TicketController extends Controller
 
             $technician = User::where('id', $technicians[$i])->get();
 
-            TicketController::send_email(auth()->user(), $technician);
+            TicketController::send_to_technicians(auth()->user(), $technician);
             $bruhs[$i] = $technician;
         }
 
@@ -181,18 +201,23 @@ class TicketController extends Controller
 
             $technicians = $request->input('technicians');
 
-            for ($i=0; $i < count($technicians); $i++) {
-                $notified = TechnicianTicket::where('technician_id', $technicians[$i])->where('ticket_id', $ticket->id)->get();
+            if($request->input('status') == "Open") {
+                for ($i=0; $i < count($technicians); $i++) {
+                    $notified = TechnicianTicket::where('technician_id', $technicians[$i])->where('ticket_id', $ticket->id)->get();
 
-                if(count($notified) == 0) {
-                    $technician = User::where('id', $technicians[$i])->get();
-                    TicketController::send_email(auth()->user(), $technician);
+                    if(count($notified) == 0) {
+                        $technician = User::where('id', $technicians[$i])->get();
+                        TicketController::send_to_technicians(auth()->user(), $technician);
+                    }
                 }
-
             }
 
             $ticket->technicians()->sync($technicians);
 
+            if($request->input('status') == "Closed") TicketController::send_to_client($ticket->client, $ticket->title);
+
+        } else {
+            if($request->input('status') == "Pending") TicketController::send_to_agent(auth()->user(), $ticket->agent, $ticket->title);
         }
 
         $ticket->description = $request->input('description');
@@ -218,7 +243,7 @@ class TicketController extends Controller
         return redirect('/dashboard')->with('warning', 'Ticket Deleted');
     }
 
-    public function send_email($agent, $technician)
+    public function send_to_technicians($agent, $technician)
     {
         $assignmentData = [
             'greeting' => 'Hello '. $technician[0]->name,
@@ -228,6 +253,30 @@ class TicketController extends Controller
         ];
 
         $technician[0]->notify(new TicketAssignment($assignmentData));
+    }
+
+    public function send_to_agent($technician, $agent, $ticket_title)
+    {
+        $assignmentData = [
+            'greeting' => 'Hello '. $agent->name,
+            'body' => 'Technician '. $technician->name . ' has solved the issue on ticket "'. $ticket_title .'".' . "\n" . 'Ticket is awaiting your approval.',
+            'button' => 'Visit Site',
+            'url' => url('/pending'),
+        ];
+
+        $agent->notify(new TicketAssignment($assignmentData));
+    }
+
+    public function send_to_client($client, $ticket_title)
+    {
+        $assignmentData = [
+            'greeting' => 'Hello '. $client->name,
+            'body' => 'Your issue under the name of "'. $ticket_title .'" has been resolved',
+            'button' => 'Thank you for your patience',
+            'url' => url('/dashboard'),
+        ];
+
+        $client->notify(new TicketAssignment($assignmentData));
     }
 
 }

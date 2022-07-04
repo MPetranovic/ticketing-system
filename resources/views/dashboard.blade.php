@@ -15,7 +15,7 @@
     </x-slot>
 
     @if (auth()->user()->role == 'agent')
-    <div class="py-4">
+    <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 flex justify-between">
@@ -53,8 +53,8 @@
     <div class="py-2">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight ml-3">
-                List of tickets:
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mt-2 mb-2 ml-3">
+                All tickets:
             </h2>
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

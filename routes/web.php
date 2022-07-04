@@ -20,6 +20,7 @@ Route::get('/', function () {
 });
 
 Route::get('dashboard', [TicketController::class, 'index'])->middleware(['auth'])->name('dashboard');
+Route::get('pending', [TicketController::class, 'pending'])->middleware(['auth'])->name('pending');
 
 Route::get('create', [TicketController::class, 'create'])->middleware('agent');
 Route::post('created',[TicketController::class, 'store'])->middleware(('agent'));

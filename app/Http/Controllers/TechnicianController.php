@@ -17,7 +17,7 @@ class TechnicianController extends Controller
         return view('technicians.index', [
             'technicians' => User::where('role', 'technician')->filter(
                 request(['search']))->sortable(['created_at' => 'asc'])
-                ->paginate(7)->withQueryString()
+                ->paginate(9)->withQueryString()
         ]);
     }
 

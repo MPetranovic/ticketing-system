@@ -65,7 +65,16 @@
         </div>
     </div>
 
-    <a href ="{{ url()->previous() }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
+    <?php
+        $p = str_replace(url('/'), '', url()->previous());
+        $previous = str_replace('/update/', '', $p);
+    ?>
+    @if($previous == $ticket->title)
+        <a href ={{ url('/dashboard') }}><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
+    @else
+        <a href ="{{ url()->previous() }}"><button class="fixed bg-sky-400 text-white py-2 px-4 rounded-xl bottom-3 left-3">Back</button></a>
+    @endif
+
 </x-app-layout>
 
 

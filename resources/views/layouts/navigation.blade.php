@@ -6,7 +6,9 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
+                        <div class="flex justify-center">
+                            <img src="/ticket.svg" class="h-8 w-8 mr-2">
+                        </div>
                     </a>
                 </div>
 
@@ -15,6 +17,15 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @if (auth()->user()->role == 'agent')
+                        <x-nav-link :href="route('pending')" :active="request()->routeIs('pending')">
+                            {{ __('Pending Tickets') }}
+                        </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('pending')" :active="request()->routeIs('pending')">
+                            {{ __('Open Tickets') }}
+                        </x-nav-link>
+                    @endif
                     @if (auth()->user()->role == 'agent')
                         <x-nav-link :href="route('technicians')" :active="request()->routeIs('technicians')">
                             {{ __('Technicians') }}
